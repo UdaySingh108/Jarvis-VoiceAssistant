@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Voice Assistant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Jarvis Voice Assistant</h1>
+    <form id="command-form">
+        <label for="command">Enter your command:</label><br>
+        <input type="text" id="command" name="command" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <button id="voice-command">Give Voice Command</button>
+
+    <h2>Response:</h2>
+    <div id="response"></div>
+
+    <script>
+        // Handle text command submission
+        $("#command-form").on("submit", function(e) {
+            e.preventDefault();
+            var command = $("#command").val();
+            $.ajax({
+                type: "POST",
+                url: "/process",
+                data: {command: command},
+                success: function(response) {
+                    $("#response").html(response.response);
+                    if (response.link) {
+                        window.open(response.link, '_blank');
+                    }
+                },
+                error: function() {
+                    $("#response").html("Error processing command.");
+                }
+            });
+        });
+
+        // Handle voice command
+        $("#voice-command").on("click", function() {
+            $.ajax({
+                type: "POST",
+                url: "/voice-command",
+                success: function(response) {
+                    $("#response").html(response.response);
+                    if (response.link) {
+                        window.open(response.link, '_blank');
+                    }
+                },
+                error: function() {
+                    $("#response").html("Error processing voice command.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
